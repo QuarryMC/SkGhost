@@ -54,8 +54,6 @@ class EffSetPattern : Effect() {
     }
 
     override fun execute(event: Event?) {
-        println(view.getSingle(event))
-        println(stage.getSingle(event))
         if (view.getSingle(event) == null || stage.getSingle(event) == null || pattern.getSingle(event) == null) return
         stage.getSingle(event)!!.changePattern(view.getSingle(event)!!.name, PatternData(Utils.parseMaterialValues(pattern.getSingle(event)!!)))
     }
