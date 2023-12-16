@@ -6,7 +6,8 @@ import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
 import me.kooper.ghostcore.data.PatternData
-import me.kooper.skghost.SkGhost
+import me.kooper.ghostcore.data.ViewData
+import me.kooper.ghostcore.models.Stage
 import me.kooper.skghost.utils.Utils
 import org.bukkit.event.Event
 
@@ -16,14 +17,14 @@ class EffSetPattern : Effect() {
         init {
             Skript.registerEffect(
                 EffAddBlocks::class.java,
-                "set pattern of %string% (of|in) %string% to %string%"
+                "set pattern of %view% (of|in) %stage% to %string%"
             )
         }
     }
 
     private lateinit var pattern: Expression<String>
-    private lateinit var view: Expression<String>
-    private lateinit var stage: Expression<String>
+    private lateinit var view: Expression<ViewData>
+    private lateinit var stage: Expression<Stage>
 
     override fun toString(event: Event?, debug: Boolean): String {
         return "Set blocks to pattern: ${
@@ -46,22 +47,17 @@ class EffSetPattern : Effect() {
         isDelayed: Kleenean?,
         parser: SkriptParser.ParseResult?
     ): Boolean {
-        view = expressions!![0] as Expression<String>
-        stage = expressions[1] as Expression<String>
+        view = expressions!![0] as Expression<ViewData>
+        stage = expressions[1] as Expression<Stage>
         pattern = expressions[2] as Expression<String>
         return true
     }
 
     override fun execute(event: Event?) {
-        if (view.getSingle(event) == null || stage.getSingle(event) == null || pattern.getSingle(event) == null
-            || SkGhost.instance.ghostCore.stageManager.getStage(
-                stage.getSingle(event)!!
-            ) == null || SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.views[view.getSingle(
-                event
-            )!!] == null
-        ) return
-        SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.changePattern(view.getSingle(event)!!, PatternData(
-            Utils.parseMaterialValues(pattern.getSingle(event)!!)))
+        println(view.getSingle(event))
+        println(stage.getSingle(event))
+        if (view.getSingle(event) == null || stage.getSingle(event) == null || pattern.getSingle(event) == null) return
+        stage.getSingle(event)!!.changePattern(view.getSingle(event)!!.name, PatternData(Utils.parseMaterialValues(pattern.getSingle(event)!!)))
     }
 
 }

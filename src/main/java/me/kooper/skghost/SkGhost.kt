@@ -24,6 +24,7 @@ class SkGhost : JavaPlugin() {
 
         }
         addon = Skript.registerAddon(this)
+        addon.setLanguageFileDirectory("lang")
         try {
             addon.loadClasses("me.kooper.skghost", "elements")
         } catch (e: IOException) {
