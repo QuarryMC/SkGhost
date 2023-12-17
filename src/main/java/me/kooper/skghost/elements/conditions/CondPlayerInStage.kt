@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Condition
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.skghost.SkGhost
+import me.kooper.ghostcore.models.Stage
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
@@ -15,13 +15,13 @@ class CondPlayerInStage : Condition() {
         init {
             Skript.registerCondition(
                 CondPlayerInStage::class.java,
-                "%player% (1¦is|2¦is(n't| not)) in %string%"
+                "%player% (1¦is|2¦is(n't| not)) in stage %stage%"
             )
         }
     }
 
     private lateinit var player: Expression<Player>
-    private lateinit var stage: Expression<String>
+    private lateinit var stage: Expression<Stage>
 
     @Suppress("UNCHECKED_CAST")
     override fun init(
@@ -31,7 +31,7 @@ class CondPlayerInStage : Condition() {
         parser: SkriptParser.ParseResult?
     ): Boolean {
         player = expressions[0] as Expression<Player>
-        stage = expressions[1] as Expression<String>
+        stage = expressions[1] as Expression<Stage>
         return true
     }
 
@@ -45,11 +45,8 @@ class CondPlayerInStage : Condition() {
     }
 
     override fun check(event: Event?): Boolean {
-        if (stage.getSingle(event) == null || player.getSingle(event) == null || SkGhost.instance.ghostCore.stageManager.getStage(
-                stage.getSingle(event)!!
-            ) == null
-        ) return false
-        return SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.audience.contains(
+        if (stage.getSingle(event) == null || player.getSingle(event) == null) return false
+        return stage.getSingle(event)!!.audience.contains(
             player.getSingle(
                 event
             )!!.uniqueId

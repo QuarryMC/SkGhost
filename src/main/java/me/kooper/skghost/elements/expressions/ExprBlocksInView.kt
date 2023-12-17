@@ -49,7 +49,6 @@ class ExprBlocksInView : SimpleExpression<Location>() {
         if (view.getSingle(event) == null || stage.getSingle(event) == null) return arrayOf(null)
         val stage: Stage = stage.getSingle(event)!!
         val view: ViewData = view.getSingle(event)!!
-        if (stage.views[view.name] == null) return arrayOf(null)
         return stage.views[view.name]!!.blocks.keys.map { p -> p.toLocation(stage.world) }.toTypedArray()
     }
 

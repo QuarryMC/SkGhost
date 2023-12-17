@@ -20,7 +20,7 @@ class ExprPatternOfView : SimpleExpression<String>() {
         init {
             Skript.registerExpression(
                 ExprPatternOfView::class.java,
-                String::class.java, ExpressionType.COMBINED, "[the] pattern of %view% (of|in) %stage%"
+                String::class.java, ExpressionType.COMBINED, "[the] pattern of view %view% (of|in) stage %stage%"
             )
         }
     }
@@ -48,7 +48,6 @@ class ExprPatternOfView : SimpleExpression<String>() {
         if (view.getSingle(event) == null || stage.getSingle(event) == null) return arrayOf(null)
         val stage: Stage = stage.getSingle(event)!!
         val view: ViewData = view.getSingle(event)!!
-        if (stage.views[view.name] == null) return arrayOf(null)
         return arrayOf(Utils.createMaterialValuesString(stage.views[view.name]!!.patternData.blockDataPercentages))
     }
 

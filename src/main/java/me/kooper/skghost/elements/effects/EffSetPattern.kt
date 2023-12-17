@@ -16,8 +16,8 @@ class EffSetPattern : Effect() {
     companion object {
         init {
             Skript.registerEffect(
-                EffAddBlocks::class.java,
-                "set pattern of %view% (of|in) %stage% to %string%"
+                EffSetPattern::class.java,
+                "set pattern of view %view% (of|in) stage %stage% to pattern %string%"
             )
         }
     }

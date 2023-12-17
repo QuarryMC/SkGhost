@@ -19,7 +19,7 @@ class ExprStageAudience : SimpleExpression<Player>() {
         init {
             Skript.registerExpression(
                 ExprStageAudience::class.java,
-                Player::class.java, ExpressionType.SIMPLE, "[the] audience of %stage%", "%stage%('s) audience"
+                Player::class.java, ExpressionType.SIMPLE, "[the] audience of stage %stage%", "[stage] %stage%('s) audience"
             )
         }
     }

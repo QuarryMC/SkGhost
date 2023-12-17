@@ -20,7 +20,7 @@ class Stage {
                     .parser(object : Parser<Stage>() {
                         override fun parse(input: String?, context: ParseContext?): Stage? {
                             if (input == null || SkGhost.instance.ghostCore.stageManager.getStage(input) == null) return null
-                            return SkGhost.instance.ghostCore.stageManager.getStage(input)
+                            return SkGhost.instance.ghostCore.stageManager.getStage(input)!!
                         }
 
                         override fun canParse(context: ParseContext?): Boolean {

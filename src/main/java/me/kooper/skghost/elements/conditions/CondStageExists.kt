@@ -14,7 +14,7 @@ class CondStageExists : Condition() {
         init {
             Skript.registerCondition(
                 CondStageExists::class.java,
-                "%string% (1¦does|2¦does(n't| not)) exist"
+                "stage with name %string% (1¦does|2¦does(n't| not)) exist"
             )
         }
     }

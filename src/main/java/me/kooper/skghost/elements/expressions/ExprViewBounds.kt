@@ -66,7 +66,7 @@ class ExprViewBounds {
             init {
                 Skript.registerExpression(
                     ViewPos2Bound::class.java,
-                    Location::class.java, ExpressionType.COMBINED, "[the] pos2 of %view% (of|in) %stage%"
+                    Location::class.java, ExpressionType.COMBINED, "[the] pos2 of view %view% (of|in) stage %stage%"
                 )
             }
         }

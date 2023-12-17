@@ -6,7 +6,8 @@ import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
 import io.papermc.paper.math.Position
-import me.kooper.skghost.SkGhost
+import me.kooper.ghostcore.data.ViewData
+import me.kooper.ghostcore.models.Stage
 import org.bukkit.block.Block
 import org.bukkit.event.Event
 
@@ -17,14 +18,14 @@ class EffAddBlocks : Effect() {
         init {
             Skript.registerEffect(
                 EffAddBlocks::class.java,
-                "add %block% to %string% (of|in) %string%"
+                "add %blocks% to view %view% (of|in) stage %stage%"
             )
         }
     }
 
     private lateinit var block: Expression<Block>
-    private lateinit var view: Expression<String>
-    private lateinit var stage: Expression<String>
+    private lateinit var view: Expression<ViewData>
+    private lateinit var stage: Expression<Stage>
 
     override fun toString(event: Event?, debug: Boolean): String {
         return "Add blocks to view with expression block: ${
@@ -48,22 +49,17 @@ class EffAddBlocks : Effect() {
         parser: SkriptParser.ParseResult?
     ): Boolean {
         block = expressions!![0] as Expression<Block>
-        view = expressions[1] as Expression<String>
-        stage = expressions[2] as Expression<String>
+        view = expressions[1] as Expression<ViewData>
+        stage = expressions[2] as Expression<Stage>
         return true
     }
 
     override fun execute(event: Event?) {
-        if (view.getSingle(event) == null || stage.getSingle(event) == null || block.getSingle(event) == null || SkGhost.instance.ghostCore.stageManager.getStage(
-                stage.getSingle(event)!!
-            ) == null || SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.views[view.getSingle(
-                event
-            )!!] == null
-        ) return
-        SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.addBlocks(
+        if (view.getSingle(event) == null || stage.getSingle(event) == null || block.getSingle(event) == null) return
+        stage.getSingle(event)!!.addBlocks(
             view.getSingle(
                 event
-            )!!, block.getAll(event)!!.map { b -> Position.block(b.location) }.toSet()
+            )!!.name, block.getAll(event)!!.map { b -> Position.block(b.location) }.toSet()
         )
     }
 

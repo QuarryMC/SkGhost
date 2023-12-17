@@ -6,7 +6,7 @@ import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
 import io.papermc.paper.math.Position
-import me.kooper.skghost.SkGhost
+import me.kooper.ghostcore.data.ViewData
 import org.bukkit.Location
 import org.bukkit.event.Event
 
@@ -18,14 +18,13 @@ class CondLocationInView : Condition() {
         init {
             Skript.registerCondition(
                 CondLocationInView::class.java,
-                "%location% (1¦is|2¦is(n't| not)) inside [of] %string% [of|in] %string%"
+                "%location% (1¦is|2¦is(n't| not)) inside [of] view %view%"
             )
         }
     }
 
     private lateinit var location: Expression<Location>
-    private lateinit var view: Expression<String>
-    private lateinit var stage: Expression<String>
+    private lateinit var view: Expression<ViewData>
 
     @Suppress("UNCHECKED_CAST")
     override fun init(
@@ -35,8 +34,7 @@ class CondLocationInView : Condition() {
         parser: SkriptParser.ParseResult?
     ): Boolean {
         location = expressions[0] as Expression<Location>
-        view = expressions[1] as Expression<String>
-        stage = expressions[2] as Expression<String>
+        view = expressions[1] as Expression<ViewData>
         isNegated = parser!!.mark == 1
         return true
     }
@@ -47,18 +45,12 @@ class CondLocationInView : Condition() {
                 event,
                 debug
             )
-        } ${stage.toString(event, debug)}"
+        }"
     }
 
     override fun check(event: Event?): Boolean {
-        if (stage.getSingle(event) == null || location.getSingle(event) == null || view.getSingle(event) == null || SkGhost.instance.ghostCore.stageManager.getStage(
-                stage.getSingle(event)!!
-            ) == null || SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.views[view.getSingle(
-                event
-            )!!]
-            == null
-        ) return isNegated
-        return if (SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.views[view.getSingle(event)!!]!!.blocks[Position.block(location.getSingle(event)!!)] != null) isNegated else !isNegated
+        if (location.getSingle(event) == null || view.getSingle(event) == null) return isNegated
+        return if (view.getSingle(event)!!.blocks[Position.block(location.getSingle(event)!!)] != null) isNegated else !isNegated
     }
 
 }

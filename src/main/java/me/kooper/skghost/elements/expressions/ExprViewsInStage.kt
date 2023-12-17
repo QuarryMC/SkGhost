@@ -18,7 +18,7 @@ class ExprViewsInStage : SimpleExpression<ViewData>() {
         init {
             Skript.registerExpression(
                 ExprViewsInStage::class.java,
-                ViewData::class.java, ExpressionType.SIMPLE, "[the] view(s) of %stage%", "%stage%('s) view(s)"
+                ViewData::class.java, ExpressionType.SIMPLE, "[the] view(s) of stage %stage%", "[stage] %stage%('s) view(s)"
             )
         }
     }

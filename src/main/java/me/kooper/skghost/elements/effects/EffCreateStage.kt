@@ -5,7 +5,6 @@ import ch.njol.skript.lang.Effect
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.data.AudienceData
 import me.kooper.ghostcore.models.Stage
 import me.kooper.skghost.SkGhost
 import org.bukkit.World
@@ -20,7 +19,7 @@ class EffCreateStage : Effect() {
         init {
             Skript.registerEffect(
                 EffCreateStage::class.java,
-                "create stage (with|for) %players% (with name|named) %string% in %world%"
+                "create stage (with|for) %players% (with name|named) %string% in [world] %world%"
             )
         }
     }

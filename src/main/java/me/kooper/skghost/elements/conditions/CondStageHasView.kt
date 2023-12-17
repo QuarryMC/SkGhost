@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Condition
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.skghost.SkGhost
+import me.kooper.ghostcore.models.Stage
 import org.bukkit.event.Event
 
 class CondStageHasView : Condition() {
@@ -19,7 +19,7 @@ class CondStageHasView : Condition() {
         }
     }
 
-    private lateinit var stage: Expression<String>
+    private lateinit var stage: Expression<Stage>
     private lateinit var view: Expression<String>
 
     @Suppress("UNCHECKED_CAST")
@@ -29,7 +29,7 @@ class CondStageHasView : Condition() {
         isDelayed: Kleenean?,
         parser: SkriptParser.ParseResult?
     ): Boolean {
-        stage = expressions[0] as Expression<String>
+        stage = expressions[0] as Expression<Stage>
         view = expressions[1] as Expression<String>
         return true
     }
@@ -39,8 +39,8 @@ class CondStageHasView : Condition() {
     }
 
     override fun check(event: Event?): Boolean {
-        if (stage.getSingle(event) == null || view.getSingle(event) == null || SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!) == null) return false
-        return SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.views[view.getSingle(event)!!] != null
+        if (stage.getSingle(event) == null || view.getSingle(event) == null) return false
+        return stage.getSingle(event)!!.views[view.getSingle(event)!!] != null
     }
 
 }

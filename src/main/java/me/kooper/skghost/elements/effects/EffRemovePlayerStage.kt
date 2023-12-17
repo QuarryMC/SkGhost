@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Effect
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.skghost.SkGhost
+import me.kooper.ghostcore.models.Stage
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
@@ -15,13 +15,13 @@ class EffRemovePlayerStage : Effect() {
         init {
             Skript.registerEffect(
                 EffAddPlayerStage::class.java,
-                "remove %player% from stage %string%"
+                "remove %player% from stage %stage%"
             )
         }
     }
 
     private lateinit var player: Expression<Player>
-    private lateinit var stage: Expression<String>
+    private lateinit var stage: Expression<Stage>
 
     override fun toString(event: Event?, debug: Boolean): String {
         return "Remove player from stage with expression player: ${
@@ -40,16 +40,13 @@ class EffRemovePlayerStage : Effect() {
         parser: SkriptParser.ParseResult?
     ): Boolean {
         player = expressions!![0] as Expression<Player>
-        stage = expressions[1] as Expression<String>
+        stage = expressions[1] as Expression<Stage>
         return true
     }
 
     override fun execute(event: Event?) {
-        if (player.getSingle(event) == null || stage.getSingle(event) == null || SkGhost.instance.ghostCore.stageManager.getStage(
-                stage.getSingle(event)!!
-            ) == null
-        ) return
-        SkGhost.instance.ghostCore.stageManager.getStage(stage.getSingle(event)!!)!!.removePlayer(player.getSingle(event)!!)
+        if (player.getSingle(event) == null || stage.getSingle(event) == null) return
+        stage.getSingle(event)!!.removePlayer(player.getSingle(event)!!)
     }
 
 }
