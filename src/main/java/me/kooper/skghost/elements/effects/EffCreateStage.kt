@@ -41,7 +41,7 @@ class EffCreateStage : Effect() {
     }
 
     override fun execute(event: Event?) {
-        if (world.getSingle(event) == null || name.getSingle(event) == null || players.getSingle(event) == null) return
+        if (world.getSingle(event) == null || name.getSingle(event) == null || players.getAll(event) == null) return
         SkGhost.instance.ghostCore.stageManager.createStage(Stage(world.getSingle(event)!!, name.getSingle(event)!!, players.getAll(event).map { p -> p.uniqueId } as ArrayList<UUID>))
     }
 

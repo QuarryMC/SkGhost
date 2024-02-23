@@ -9,11 +9,12 @@ import ch.njol.util.Kleenean
 import io.papermc.paper.math.Position
 import me.kooper.ghostcore.data.ViewData
 import org.bukkit.Location
-import org.bukkit.block.Block
+import org.bukkit.Material
 import org.bukkit.event.Event
 
 
-class ExprBlockLocation : SimpleExpression<Block>() {
+@Suppress("UnstableApiUsage")
+class ExprBlockLocation : SimpleExpression<Material>() {
 
     private lateinit var view: Expression<ViewData>
     private lateinit var location: Expression<Location>
@@ -22,7 +23,7 @@ class ExprBlockLocation : SimpleExpression<Block>() {
         init {
             Skript.registerExpression(
                 ExprBlockLocation::class.java,
-                Block::class.java, ExpressionType.COMBINED, "[the] block at %location% in view %view%"
+                Material::class.java, ExpressionType.COMBINED, "[the] ghost block at %location% in view %view%"
             )
         }
     }
@@ -42,13 +43,16 @@ class ExprBlockLocation : SimpleExpression<Block>() {
         return true
     }
 
-    override fun getReturnType(): Class<out Block> {
-        return Block::class.java
+    override fun getReturnType(): Class<out Material> {
+        return Material::class.java
     }
 
-    override fun get(event: Event?): Array<Block?> {
+    override fun get(event: Event?): Array<Material?> {
         if (location.getSingle(event) == null || view.getSingle(event) == null) return arrayOf(null)
-        return arrayOf(view.getSingle(event)!!.blocks[Position.block(location.getSingle(event)!!)]!!.createBlockState().block)
+        if (view.getSingle(event)!!.blocks[Position.block(location.getSingle(event)!!)] == null) {
+            return arrayOf(null)
+        }
+        return arrayOf(view.getSingle(event)!!.blocks[Position.block(location.getSingle(event)!!)]!!.material)
     }
 
 }

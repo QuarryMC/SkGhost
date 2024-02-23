@@ -55,7 +55,7 @@ class EffAddBlocks : Effect() {
     }
 
     override fun execute(event: Event?) {
-        if (view.getSingle(event) == null || stage.getSingle(event) == null || block.getSingle(event) == null) return
+        if (view.getSingle(event) == null || stage.getSingle(event) == null || block.getAll(event) == null) return
         stage.getSingle(event)!!.addBlocks(
             view.getSingle(
                 event

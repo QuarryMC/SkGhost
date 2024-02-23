@@ -11,28 +11,22 @@ import me.kooper.ghostcore.models.Stage
 import me.kooper.skghost.utils.Utils
 import org.bukkit.event.Event
 
-class EffSetPattern : Effect() {
+class EffResetBlocks : Effect() {
 
     companion object {
         init {
             Skript.registerEffect(
-                EffSetPattern::class.java,
-                "set pattern of view %view% (of|in) stage %stage% to %string%"
+                EffResetBlocks::class.java,
+                "reset blocks of view %view% (of|in) stage %stage%"
             )
         }
     }
 
-    private lateinit var pattern: Expression<String>
     private lateinit var view: Expression<ViewData>
     private lateinit var stage: Expression<Stage>
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Set blocks to pattern: ${
-            pattern.toString(
-                event,
-                debug
-            )
-        } and string expression view: ${
+        return "Reset blocks with string expression view: ${
             view.toString(
                 event,
                 debug
@@ -49,13 +43,12 @@ class EffSetPattern : Effect() {
     ): Boolean {
         view = expressions!![0] as Expression<ViewData>
         stage = expressions[1] as Expression<Stage>
-        pattern = expressions[2] as Expression<String>
         return true
     }
 
     override fun execute(event: Event?) {
-        if (view.getSingle(event) == null || stage.getSingle(event) == null || pattern.getSingle(event) == null) return
-        stage.getSingle(event)!!.changePattern(view.getSingle(event)!!.name, PatternData(Utils.parseMaterialValues(pattern.getSingle(event)!!)))
+        if (view.getSingle(event) == null || stage.getSingle(event) == null) return
+        stage.getSingle(event)!!.resetBlocks(view.getSingle(event)!!.name)
     }
 
 }

@@ -32,6 +32,7 @@ class CondPlayerInStage : Condition() {
     ): Boolean {
         player = expressions[0] as Expression<Player>
         stage = expressions[1] as Expression<Stage>
+        isNegated = parser!!.mark == 1
         return true
     }
 
@@ -46,11 +47,11 @@ class CondPlayerInStage : Condition() {
 
     override fun check(event: Event?): Boolean {
         if (stage.getSingle(event) == null || player.getSingle(event) == null) return false
-        return stage.getSingle(event)!!.audience.contains(
+        return if (stage.getSingle(event)!!.audience.contains(
             player.getSingle(
                 event
             )!!.uniqueId
-        )
+        )) isNegated else !isNegated
     }
 
 }

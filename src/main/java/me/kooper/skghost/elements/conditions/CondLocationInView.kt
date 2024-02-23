@@ -49,7 +49,7 @@ class CondLocationInView : Condition() {
     }
 
     override fun check(event: Event?): Boolean {
-        if (location.getSingle(event) == null || view.getSingle(event) == null) return isNegated
+        if (location.getSingle(event) == null || view.getSingle(event) == null) return !isNegated
         return if (view.getSingle(event)!!.blocks[Position.block(location.getSingle(event)!!)] != null) isNegated else !isNegated
     }
 
