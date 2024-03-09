@@ -8,7 +8,9 @@ import ch.njol.util.Kleenean
 import me.kooper.ghostcore.data.PatternData
 import me.kooper.ghostcore.data.ViewData
 import me.kooper.ghostcore.models.Stage
+import me.kooper.skghost.SkGhost
 import me.kooper.skghost.utils.Utils
+import org.bukkit.Bukkit
 import org.bukkit.event.Event
 
 class EffSetPattern : Effect() {
@@ -54,8 +56,15 @@ class EffSetPattern : Effect() {
     }
 
     override fun execute(event: Event?) {
-        if (view.getSingle(event) == null || stage.getSingle(event) == null || pattern.getSingle(event) == null) return
-        stage.getSingle(event)!!.changePattern(view.getSingle(event)!!.name, PatternData(Utils.parseMaterialValues(pattern.getSingle(event)!!)))
+        val stage = stage.getSingle(event)
+        val view = view.getSingle(event)
+        val pattern = pattern.getSingle(event)
+        Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
+            run {
+                if (view == null || stage == null || pattern == null) return@Runnable
+                stage.changePattern(view.name, PatternData(Utils.parseMaterialValues(pattern)))
+            }
+        })
     }
 
 }

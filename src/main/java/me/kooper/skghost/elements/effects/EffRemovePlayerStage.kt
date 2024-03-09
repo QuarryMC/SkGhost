@@ -6,6 +6,8 @@ import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
 import me.kooper.ghostcore.models.Stage
+import me.kooper.skghost.SkGhost
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
@@ -45,8 +47,12 @@ class EffRemovePlayerStage : Effect() {
     }
 
     override fun execute(event: Event?) {
-        if (player.getSingle(event) == null || stage.getSingle(event) == null) return
-        stage.getSingle(event)!!.removePlayer(player.getSingle(event)!!)
+        Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
+            run {
+                if (player.getSingle(event) == null || stage.getSingle(event) == null) return@Runnable
+                stage.getSingle(event)!!.removePlayer(player.getSingle(event)!!)
+            }
+        })
     }
 
 }

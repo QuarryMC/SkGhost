@@ -8,7 +8,9 @@ import ch.njol.util.Kleenean
 import me.kooper.ghostcore.data.PatternData
 import me.kooper.ghostcore.data.ViewData
 import me.kooper.ghostcore.models.Stage
+import me.kooper.skghost.SkGhost
 import me.kooper.skghost.utils.Utils
+import org.bukkit.Bukkit
 import org.bukkit.event.Event
 
 class EffResetBlocks : Effect() {
@@ -47,8 +49,14 @@ class EffResetBlocks : Effect() {
     }
 
     override fun execute(event: Event?) {
-        if (view.getSingle(event) == null || stage.getSingle(event) == null) return
-        stage.getSingle(event)!!.resetBlocks(view.getSingle(event)!!.name)
+        val stage = stage.getSingle(event)
+        val view = view.getSingle(event)
+        Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
+            run {
+                if (view == null || stage == null) return@Runnable
+                stage.resetBlocks(view.name)
+            }
+        })
     }
 
 }

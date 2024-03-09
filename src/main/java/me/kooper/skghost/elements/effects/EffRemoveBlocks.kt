@@ -8,6 +8,9 @@ import ch.njol.util.Kleenean
 import io.papermc.paper.math.Position
 import me.kooper.ghostcore.data.ViewData
 import me.kooper.ghostcore.models.Stage
+import me.kooper.skghost.SkGhost
+import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.event.Event
 
@@ -18,18 +21,18 @@ class EffRemoveBlocks : Effect() {
         init {
             Skript.registerEffect(
                 EffRemoveBlocks::class.java,
-                "remove %blocks% from view %view% (of|in) stage %stage%"
+                "remove %locations% from view %view% (of|in) stage %stage%"
             )
         }
     }
 
-    private lateinit var block: Expression<Block>
+    private lateinit var location: Expression<Location>
     private lateinit var view: Expression<ViewData>
     private lateinit var stage: Expression<Stage>
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Remove blocks to view with expression block: ${
-            block.toString(
+        return "Remove blocks to view with expression location: ${
+            location.toString(
                 event,
                 debug
             )
@@ -48,19 +51,24 @@ class EffRemoveBlocks : Effect() {
         isDelayed: Kleenean?,
         parser: SkriptParser.ParseResult?
     ): Boolean {
-        block = expressions!![0] as Expression<Block>
+        location = expressions!![0] as Expression<Location>
         view = expressions[1] as Expression<ViewData>
         stage = expressions[2] as Expression<Stage>
         return true
     }
 
     override fun execute(event: Event?) {
-        if (view.getSingle(event) == null || stage.getSingle(event) == null || block.getAll(event) == null) return
-        stage.getSingle(event)!!.removeBlocks(
-            view.getSingle(
-                event
-            )!!.name, block.getAll(event)!!.map { b -> Position.block(b.location) }.toSet()
-        )
+        val blocks = location.getAll(event)
+        val stage = stage.getSingle(event)
+        val view = view.getSingle(event)
+        Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
+            run {
+                if (view == null || stage == null || blocks == null) return@Runnable
+                stage.removeBlocks(
+                    view.name, blocks.map { Position.block(it) }.toSet()
+                )
+            }
+        })
     }
 
 }

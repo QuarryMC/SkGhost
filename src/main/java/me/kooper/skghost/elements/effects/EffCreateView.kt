@@ -8,8 +8,10 @@ import ch.njol.util.Kleenean
 import io.papermc.paper.math.Position
 import me.kooper.ghostcore.data.PatternData
 import me.kooper.ghostcore.models.Stage
+import me.kooper.skghost.SkGhost
 import me.kooper.skghost.utils.Utils
-import org.bukkit.block.Block
+import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.event.Event
 
 class EffCreateView : Effect() {
@@ -18,7 +20,7 @@ class EffCreateView : Effect() {
         init {
             Skript.registerEffect(
                 EffCreateView::class.java,
-                "create view (for|in) %stage% (with name|named) %string% (with|from) %blocks% with pattern %string% that (1¦is|2¦is(n't| not)) breakable"
+                "create view (for|in) %stage% (with name|named) %string% (with|from) %locations% with pattern %string% that (1¦is|2¦is(n't| not)) breakable"
             )
         }
     }
@@ -26,7 +28,7 @@ class EffCreateView : Effect() {
     private lateinit var stage: Expression<Stage>
     private lateinit var name: Expression<String>
     private var breakable: Boolean = false
-    private lateinit var blocks: Expression<Block>
+    private lateinit var locations: Expression<Location>
     private lateinit var pattern: Expression<String>
 
     override fun toString(event: Event?, debug: Boolean): String {
@@ -35,8 +37,8 @@ class EffCreateView : Effect() {
                 event,
                 debug
             )
-        }, blocks ${
-            blocks.toString(
+        }, locations ${
+            locations.toString(
                 event,
                 debug
             )
@@ -52,7 +54,7 @@ class EffCreateView : Effect() {
     ): Boolean {
         stage = expressions!![0] as Expression<Stage>
         name = expressions[1] as Expression<String>
-        blocks = expressions[2] as Expression<Block>
+        locations = expressions[2] as Expression<Location>
         pattern = expressions[3] as Expression<String>
         breakable = parser!!.mark == 1
         return true
@@ -60,13 +62,20 @@ class EffCreateView : Effect() {
 
     @Suppress("UnstableApiUsage")
     override fun execute(event: Event?) {
-        if (stage.getSingle(event) == null || name.getSingle(event) == null || blocks.getAll(event) == null || pattern.getSingle(event) == null) return
-        stage.getSingle(event)!!.createView(
-            name.getSingle(event)!!,
-            HashSet(blocks.getAll(event)!!.map { block -> Position.block(block.location) }),
-            PatternData(Utils.parseMaterialValues(pattern.getSingle(event)!!)),
-            breakable
-        )
+        val stage = stage.getSingle(event)
+        val blocks = locations.getAll(event)
+        val name = name.getSingle(event)!!
+        Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
+            run {
+                if (stage == null || blocks == null || pattern.getSingle(event) == null) return@Runnable
+                stage.createView(
+                    name,
+                    HashSet(blocks.map { Position.block(it) }),
+                    PatternData(Utils.parseMaterialValues(pattern.getSingle(event)!!)),
+                    breakable
+                )
+            }
+        })
     }
 
 }

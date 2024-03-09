@@ -45,8 +45,10 @@ class EffAddPlayerStage : Effect() {
     }
 
     override fun execute(event: Event?) {
-        if (player.getSingle(event) == null || stage.getSingle(event) == null) return
-        stage.getSingle(event)!!.addPlayer(player.getSingle(event)!!)
+        val stage = stage.getSingle(event)
+        val player = player.getSingle(event)
+        if (player == null || stage == null) return
+        stage.addPlayer(player)
     }
 
 }
