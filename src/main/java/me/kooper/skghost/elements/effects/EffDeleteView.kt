@@ -6,32 +6,36 @@ import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
 import me.kooper.ghostcore.models.ChunkedStage
+import me.kooper.ghostcore.models.ChunkedView
+import me.kooper.ghostcore.utils.PatternData
+import me.kooper.ghostcore.utils.types.SimplePosition
 import me.kooper.skghost.SkGhost
+import me.kooper.skghost.utils.Utils
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
+import org.bukkit.Location
 import org.bukkit.event.Event
 
-class EffRemovePlayerStage : Effect() {
+class EffDeleteView : Effect() {
 
     companion object {
         init {
             Skript.registerEffect(
-                EffAddPlayerStage::class.java,
-                "remove %player% from stage %stage%"
+                EffDeleteView::class.java,
+                "delete view (for|in) %stage% (with name|named) %string%"
             )
         }
     }
 
-    private lateinit var player: Expression<Player>
     private lateinit var stage: Expression<ChunkedStage>
+    private lateinit var name: Expression<String>
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Remove player from stage with expression player: ${
-            player.toString(
+        return "Delete view with stage expression: ${stage.toString(event, debug)}, name expression: ${
+            name.toString(
                 event,
                 debug
             )
-        } and string expression stage ${stage.toString(event, debug)}"
+        }"
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -41,18 +45,20 @@ class EffRemovePlayerStage : Effect() {
         isDelayed: Kleenean?,
         parser: SkriptParser.ParseResult?
     ): Boolean {
-        player = expressions!![0] as Expression<Player>
-        stage = expressions[1] as Expression<ChunkedStage>
+        stage = expressions!![0] as Expression<ChunkedStage>
+        name = expressions[1] as Expression<String>
         return true
     }
 
+    @Suppress("UnstableApiUsage")
     override fun execute(event: Event?) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
-            run {
-                if (player.getSingle(event) == null || stage.getSingle(event) == null) return@Runnable
-                stage.getSingle(event)!!.removePlayer(player.getSingle(event)!!)
-            }
-        })
+        val stage = stage.getSingle(event)
+        val name = name.getSingle(event)
+
+        if (stage == null || name == null) return
+
+        val view = stage.views[name] ?: return
+        stage.deleteView(name)
     }
 
 }

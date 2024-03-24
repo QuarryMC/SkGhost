@@ -6,7 +6,9 @@ import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
 import me.kooper.ghostcore.models.ChunkedStage
+import me.kooper.ghostcore.models.ChunkedView
 import me.kooper.ghostcore.utils.PatternData
+import me.kooper.ghostcore.utils.SimpleBound
 import me.kooper.ghostcore.utils.types.SimplePosition
 import me.kooper.skghost.SkGhost
 import me.kooper.skghost.utils.Utils
@@ -14,13 +16,13 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.Event
 
-class EffCreateView : Effect() {
+class EffResizeView : Effect() {
 
     companion object {
         init {
             Skript.registerEffect(
-                EffCreateView::class.java,
-                "create view (for|in) %stage% (with name|named) %string% (with|from) %locations% with pattern %string% that (1¦is|2¦is(n't| not)) breakable"
+                EffResizeView::class.java,
+                "reset view (for|in) %stage% (with name|named) %string% (with|from) %locations% with pattern %string% that (1¦is|2¦is(n't| not)) breakable"
             )
         }
     }
@@ -68,6 +70,8 @@ class EffCreateView : Effect() {
         Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
             run {
                 if (stage == null || blocks == null || pattern.getSingle(event) == null) return@Runnable
+                val existingView = stage.views[name] ?: return@Runnable
+                if (existingView !is ChunkedView) return@Runnable
 
                 val locs = blocks.map { p ->
                     SimplePosition.from(
@@ -95,13 +99,11 @@ class EffCreateView : Effect() {
                     maxLoc = locs[0]
                 }
 
-                stage.createView(
-                    name,
-                    minLoc,
-                    maxLoc,
-                    PatternData(Utils.parseMaterialValues(pattern.getSingle(event)!!)),
-                    breakable
-                )
+                existingView.bound = SimpleBound(minLoc, maxLoc)
+                existingView.patternData = PatternData(Utils.parseMaterialValues(pattern.getSingle(event)!!))
+                existingView.setBreakable(breakable)
+                stage.setAirBlocks(name, existingView.getAllBlocksInBound().keys)
+                stage.resetBlocks(name)
             }
         })
     }

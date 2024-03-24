@@ -6,19 +6,22 @@ import ch.njol.skript.lang.ExpressionType
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.skript.lang.util.SimpleExpression
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.data.ViewData
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
+import me.kooper.ghostcore.models.ChunkedView
 import org.bukkit.event.Event
 
-class ExprViewsInStage : SimpleExpression<ViewData>() {
+class ExprViewsInStage : SimpleExpression<ChunkedView>() {
 
-    private lateinit var stage: Expression<Stage>
+    private lateinit var stage: Expression<ChunkedStage>
 
     companion object {
         init {
             Skript.registerExpression(
                 ExprViewsInStage::class.java,
-                ViewData::class.java, ExpressionType.SIMPLE, "[the] view(s) of stage %stage%", "[stage] %stage%('s) view(s)"
+                ChunkedView::class.java,
+                ExpressionType.SIMPLE,
+                "[the] view(s) of stage %stage%",
+                "[stage] %stage%('s) view(s)"
             )
         }
     }
@@ -28,8 +31,13 @@ class ExprViewsInStage : SimpleExpression<ViewData>() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun init(expressions: Array<out Expression<*>>?, matchedPattern: Int, isDelayed: Kleenean?, parser: SkriptParser.ParseResult?): Boolean {
-        stage = expressions!![0] as Expression<Stage>
+    override fun init(
+        expressions: Array<out Expression<*>>?,
+        matchedPattern: Int,
+        isDelayed: Kleenean?,
+        parser: SkriptParser.ParseResult?
+    ): Boolean {
+        stage = expressions!![0] as Expression<ChunkedStage>
         return true
     }
 
@@ -37,13 +45,15 @@ class ExprViewsInStage : SimpleExpression<ViewData>() {
         return true
     }
 
-    override fun getReturnType(): Class<out ViewData> {
-        return ViewData::class.java
+    override fun getReturnType(): Class<out ChunkedView> {
+        return ChunkedView::class.java
     }
 
-    override fun get(event: Event?): Array<ViewData?> {
+    override fun get(event: Event?): Array<ChunkedView?> {
         if (stage.getSingle(event) == null) return arrayOf(null)
-        return stage.getSingle(event)!!.views.values.toTypedArray()
+        return (stage.getSingle(event)!!.views.mapValues {
+            it.value as ChunkedView
+        }).values.toTypedArray()
 
     }
 

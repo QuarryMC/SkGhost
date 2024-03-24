@@ -22,17 +22,29 @@ class ExprBlocksWithin : SimpleExpression<Location>() {
         init {
             Skript.registerExpression(
                 ExprBlocksWithin::class.java,
-                Location::class.java, ExpressionType.COMBINED, "[the] ghost locations (within|between) %location% and %location%"
+                Location::class.java,
+                ExpressionType.COMBINED,
+                "[the] ghost locations (within|between) %location% and %location%"
             )
         }
     }
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Locations within loc1 and loc2 expression with expression location1: ${location1.toString(event, debug)} and location2: ${location2.toString(event, debug)}"
+        return "Locations within loc1 and loc2 expression with expression location1: ${
+            location1.toString(
+                event,
+                debug
+            )
+        } and location2: ${location2.toString(event, debug)}"
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun init(expressions: Array<out Expression<*>>?, matchedPattern: Int, isDelayed: Kleenean?, parser: SkriptParser.ParseResult?): Boolean {
+    override fun init(
+        expressions: Array<out Expression<*>>?,
+        matchedPattern: Int,
+        isDelayed: Kleenean?,
+        parser: SkriptParser.ParseResult?
+    ): Boolean {
         location1 = expressions!![0] as Expression<Location>
         location2 = expressions[1] as Expression<Location>
         return true
@@ -48,7 +60,10 @@ class ExprBlocksWithin : SimpleExpression<Location>() {
 
     override fun get(event: Event?): Array<Location?> {
         if (location1.getSingle(event) == null || location2.getSingle(event) == null) return arrayOf(null)
-        return PositionUtils.getLocationsWithin(Position.block(location1.getSingle(event)!!), Position.block(location2.getSingle(event)!!)).map { it.toLocation(location1.getSingle(event)!!.world) }.toTypedArray()
+        return PositionUtils.getLocationsWithin(
+            Position.block(location1.getSingle(event)!!),
+            Position.block(location2.getSingle(event)!!)
+        ).map { it.toLocation(location1.getSingle(event)!!.world) }.toTypedArray()
     }
 
 }

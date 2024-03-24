@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Condition
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
 import org.bukkit.event.Event
 
 class CondStageHasView : Condition() {
@@ -19,7 +19,7 @@ class CondStageHasView : Condition() {
         }
     }
 
-    private lateinit var stage: Expression<Stage>
+    private lateinit var stage: Expression<ChunkedStage>
     private lateinit var view: Expression<String>
 
     @Suppress("UNCHECKED_CAST")
@@ -29,7 +29,7 @@ class CondStageHasView : Condition() {
         isDelayed: Kleenean?,
         parser: SkriptParser.ParseResult?
     ): Boolean {
-        stage = expressions[0] as Expression<Stage>
+        stage = expressions[0] as Expression<ChunkedStage>
         view = expressions[1] as Expression<String>
         return true
     }

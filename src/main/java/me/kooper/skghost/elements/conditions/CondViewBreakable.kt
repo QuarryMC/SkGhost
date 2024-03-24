@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Condition
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.data.ViewData
+import me.kooper.ghostcore.models.ChunkedView
 import org.bukkit.event.Event
 
 class CondViewBreakable : Condition() {
@@ -19,7 +19,7 @@ class CondViewBreakable : Condition() {
         }
     }
 
-    private lateinit var view: Expression<ViewData>
+    private lateinit var view: Expression<ChunkedView>
 
     @Suppress("UNCHECKED_CAST")
     override fun init(
@@ -28,7 +28,7 @@ class CondViewBreakable : Condition() {
         isDelayed: Kleenean?,
         parser: SkriptParser.ParseResult?
     ): Boolean {
-        view = expressions[0] as Expression<ViewData>
+        view = expressions[0] as Expression<ChunkedView>
         isNegated = parser!!.mark == 1
         return true
     }
@@ -44,7 +44,7 @@ class CondViewBreakable : Condition() {
 
     override fun check(event: Event?): Boolean {
         if (view.getSingle(event) == null) return isNegated
-        return if (view.getSingle(event)!!.isBreakable) isNegated else !isNegated
+        return if (view.getSingle(event)!!.isBreakable()) isNegated else !isNegated
     }
 
 

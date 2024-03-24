@@ -22,17 +22,29 @@ class ExprBlocksRadius : SimpleExpression<Location>() {
         init {
             Skript.registerExpression(
                 ExprBlocksRadius::class.java,
-                Location::class.java, ExpressionType.COMBINED, "[the] ghost locations in radius %integer% around %location%"
+                Location::class.java,
+                ExpressionType.COMBINED,
+                "[the] ghost locations in radius %integer% around %location%"
             )
         }
     }
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Locations in radius expression with expression center: ${center.toString(event, debug)} and radius: ${radius.toString(event, debug)}"
+        return "Locations in radius expression with expression center: ${
+            center.toString(
+                event,
+                debug
+            )
+        } and radius: ${radius.toString(event, debug)}"
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun init(expressions: Array<out Expression<*>>?, matchedPattern: Int, isDelayed: Kleenean?, parser: SkriptParser.ParseResult?): Boolean {
+    override fun init(
+        expressions: Array<out Expression<*>>?,
+        matchedPattern: Int,
+        isDelayed: Kleenean?,
+        parser: SkriptParser.ParseResult?
+    ): Boolean {
         radius = expressions!![0] as Expression<Int>
         center = expressions[1] as Expression<Location>
         return true
@@ -48,7 +60,8 @@ class ExprBlocksRadius : SimpleExpression<Location>() {
 
     override fun get(event: Event?): Array<Location?> {
         if (center.getSingle(event) == null || radius.getSingle(event) == null) return arrayOf(null)
-        return PositionUtils.getLocationsInRadius(Position.block(center.getSingle(event)!!), radius.getSingle(event)!!).map { it.toLocation(center.getSingle(event)!!.world) }.toTypedArray()
+        return PositionUtils.getLocationsInRadius(Position.block(center.getSingle(event)!!), radius.getSingle(event)!!)
+            .map { it.toLocation(center.getSingle(event)!!.world) }.toTypedArray()
     }
 
 }

@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Condition
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
@@ -21,7 +21,7 @@ class CondPlayerInStage : Condition() {
     }
 
     private lateinit var player: Expression<Player>
-    private lateinit var stage: Expression<Stage>
+    private lateinit var stage: Expression<ChunkedStage>
 
     @Suppress("UNCHECKED_CAST")
     override fun init(
@@ -31,7 +31,7 @@ class CondPlayerInStage : Condition() {
         parser: SkriptParser.ParseResult?
     ): Boolean {
         player = expressions[0] as Expression<Player>
-        stage = expressions[1] as Expression<Stage>
+        stage = expressions[1] as Expression<ChunkedStage>
         isNegated = parser!!.mark == 1
         return true
     }
@@ -48,10 +48,11 @@ class CondPlayerInStage : Condition() {
     override fun check(event: Event?): Boolean {
         if (stage.getSingle(event) == null || player.getSingle(event) == null) return false
         return if (stage.getSingle(event)!!.audience.contains(
-            player.getSingle(
-                event
-            )!!.uniqueId
-        )) isNegated else !isNegated
+                player.getSingle(
+                    event
+                )!!.uniqueId
+            )
+        ) isNegated else !isNegated
     }
 
 }

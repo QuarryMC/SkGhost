@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Effect
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
 import me.kooper.skghost.SkGhost
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -29,11 +29,21 @@ class EffCreateStage : Effect() {
     private lateinit var world: Expression<World>
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Create stage with expression players: ${players.toString(event, debug)} and string expression: ${name.toString(event, debug)}"
+        return "Create stage with expression players: ${
+            players.toString(
+                event,
+                debug
+            )
+        } and string expression: ${name.toString(event, debug)}"
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun init(expressions: Array<out Expression<*>>?, matchedPattern: Int, isDelayed: Kleenean?, parser: SkriptParser.ParseResult?): Boolean {
+    override fun init(
+        expressions: Array<out Expression<*>>?,
+        matchedPattern: Int,
+        isDelayed: Kleenean?,
+        parser: SkriptParser.ParseResult?
+    ): Boolean {
         players = expressions!![0] as Expression<Player>
         name = expressions[1] as Expression<String>
         world = expressions[2] as Expression<World>
@@ -42,7 +52,18 @@ class EffCreateStage : Effect() {
 
     override fun execute(event: Event?) {
         if (world.getSingle(event) == null || name.getSingle(event) == null || players.getAll(event) == null) return
-        SkGhost.instance.ghostCore.stageManager.createStage(Stage(world.getSingle(event)!!, name.getSingle(event)!!, players.getAll(event).map { p -> p.uniqueId } as ArrayList<UUID>))
+        val list = players.getAll(event).map {
+            it.uniqueId
+        } as ArrayList<UUID>
+        SkGhost.instance.ghostCore.stageManager.createStage(
+            ChunkedStage(
+                world.getSingle(event)!!,
+                name.getSingle(event)!!,
+                list,
+                hashMapOf(),
+                hashMapOf()
+            )
+        )
     }
 
 }

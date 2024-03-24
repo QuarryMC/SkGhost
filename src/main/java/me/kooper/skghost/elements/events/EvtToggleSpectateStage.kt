@@ -7,16 +7,20 @@ import ch.njol.skript.lang.SkriptParser
 import ch.njol.skript.registrations.EventValues
 import ch.njol.skript.util.Getter
 import me.kooper.ghostcore.events.SpectateStageEvent
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
 class EvtToggleSpectateStage : SkriptEvent() {
 
-    companion object
-    {
+    companion object {
         init {
-            Skript.registerEvent("stage toggle spectate", EvtToggleSpectateStage::class.java, SpectateStageEvent::class.java, "stage spectate")
+            Skript.registerEvent(
+                "stage toggle spectate",
+                EvtToggleSpectateStage::class.java,
+                SpectateStageEvent::class.java,
+                "stage spectate"
+            )
             EventValues.registerEventValue(
                 SpectateStageEvent::class.java,
                 Player::class.java, object : Getter<Player?, SpectateStageEvent?>() {
@@ -28,10 +32,10 @@ class EvtToggleSpectateStage : SkriptEvent() {
             )
             EventValues.registerEventValue(
                 SpectateStageEvent::class.java,
-                Stage::class.java, object : Getter<Stage?, SpectateStageEvent?>() {
-                    override operator fun get(e: SpectateStageEvent?): Stage? {
+                ChunkedStage::class.java, object : Getter<ChunkedStage?, SpectateStageEvent?>() {
+                    override operator fun get(e: SpectateStageEvent?): ChunkedStage? {
                         if (e == null) return null
-                        return e.stage
+                        return e.stage as ChunkedStage
                     }
                 }, 0
             )
@@ -51,7 +55,11 @@ class EvtToggleSpectateStage : SkriptEvent() {
         return "Ghost stage spectate event"
     }
 
-    override fun init(args: Array<out Literal<*>>?, matchedPattern: Int, parseResult: SkriptParser.ParseResult?): Boolean {
+    override fun init(
+        args: Array<out Literal<*>>?,
+        matchedPattern: Int,
+        parseResult: SkriptParser.ParseResult?
+    ): Boolean {
         return true
     }
 

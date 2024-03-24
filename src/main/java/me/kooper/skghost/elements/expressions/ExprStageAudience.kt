@@ -19,7 +19,10 @@ class ExprStageAudience : SimpleExpression<Player>() {
         init {
             Skript.registerExpression(
                 ExprStageAudience::class.java,
-                Player::class.java, ExpressionType.SIMPLE, "[the] audience of stage %stage%", "[stage] %stage%('s) audience"
+                Player::class.java,
+                ExpressionType.SIMPLE,
+                "[the] audience of stage %stage%",
+                "[stage] %stage%('s) audience"
             )
         }
     }
@@ -29,7 +32,12 @@ class ExprStageAudience : SimpleExpression<Player>() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun init(expressions: Array<out Expression<*>>?, matchedPattern: Int, isDelayed: Kleenean?, parser: SkriptParser.ParseResult?): Boolean {
+    override fun init(
+        expressions: Array<out Expression<*>>?,
+        matchedPattern: Int,
+        isDelayed: Kleenean?,
+        parser: SkriptParser.ParseResult?
+    ): Boolean {
         stage = expressions!![0] as Expression<Stage>
         return true
     }

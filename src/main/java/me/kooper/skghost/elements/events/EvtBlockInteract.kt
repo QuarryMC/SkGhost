@@ -7,9 +7,9 @@ import ch.njol.skript.lang.SkriptParser
 import ch.njol.skript.lang.util.SimpleEvent
 import ch.njol.skript.registrations.EventValues
 import ch.njol.skript.util.Getter
-import me.kooper.ghostcore.data.ViewData
 import me.kooper.ghostcore.events.GhostInteractEvent
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
+import me.kooper.ghostcore.models.ChunkedView
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
@@ -19,7 +19,12 @@ class EvtBlockInteract : SimpleEvent() {
 
     companion object {
         init {
-            Skript.registerEvent("Ghost Block Interact", EvtBlockInteract::class.java, GhostInteractEvent::class.java, "ghost block interact")
+            Skript.registerEvent(
+                "Ghost Block Interact",
+                EvtBlockInteract::class.java,
+                GhostInteractEvent::class.java,
+                "ghost block interact"
+            )
             EventValues.registerEventValue(
                 GhostInteractEvent::class.java,
                 Player::class.java, object : Getter<Player?, GhostInteractEvent?>() {
@@ -40,19 +45,19 @@ class EvtBlockInteract : SimpleEvent() {
             )
             EventValues.registerEventValue(
                 GhostInteractEvent::class.java,
-                Stage::class.java, object : Getter<Stage?, GhostInteractEvent?>() {
-                    override operator fun get(e: GhostInteractEvent?): Stage? {
+                ChunkedStage::class.java, object : Getter<ChunkedStage?, GhostInteractEvent?>() {
+                    override operator fun get(e: GhostInteractEvent?): ChunkedStage? {
                         if (e == null) return null
-                        return e.stage
+                        return e.stage as ChunkedStage
                     }
                 }, 0
             )
             EventValues.registerEventValue(
                 GhostInteractEvent::class.java,
-                ViewData::class.java, object : Getter<ViewData?, GhostInteractEvent?>() {
-                    override operator fun get(e: GhostInteractEvent?): ViewData? {
+                ChunkedView::class.java, object : Getter<ChunkedView?, GhostInteractEvent?>() {
+                    override operator fun get(e: GhostInteractEvent?): ChunkedView? {
                         if (e == null) return null
-                        return e.view
+                        return e.view as ChunkedView
                     }
                 }, 0
             )
@@ -72,7 +77,11 @@ class EvtBlockInteract : SimpleEvent() {
         return "Ghost block interact event"
     }
 
-    override fun init(args: Array<out Literal<*>>?, matchedPattern: Int, parseResult: SkriptParser.ParseResult?): Boolean {
+    override fun init(
+        args: Array<out Literal<*>>?,
+        matchedPattern: Int,
+        parseResult: SkriptParser.ParseResult?
+    ): Boolean {
         return true
     }
 

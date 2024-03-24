@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Effect
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
@@ -21,7 +21,7 @@ class EffAddPlayerStage : Effect() {
     }
 
     private lateinit var player: Expression<Player>
-    private lateinit var stage: Expression<Stage>
+    private lateinit var stage: Expression<ChunkedStage>
 
     override fun toString(event: Event?, debug: Boolean): String {
         return "Add player to stage with expression player: ${
@@ -40,7 +40,7 @@ class EffAddPlayerStage : Effect() {
         parser: SkriptParser.ParseResult?
     ): Boolean {
         player = expressions!![0] as Expression<Player>
-        stage = expressions[1] as Expression<Stage>
+        stage = expressions[1] as Expression<ChunkedStage>
         return true
     }
 

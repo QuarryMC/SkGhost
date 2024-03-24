@@ -5,9 +5,9 @@ import ch.njol.skript.lang.Effect
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import io.papermc.paper.math.Position
-import me.kooper.ghostcore.data.ViewData
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
+import me.kooper.ghostcore.models.ChunkedView
+import me.kooper.ghostcore.utils.types.SimplePosition
 import me.kooper.skghost.SkGhost
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -26,8 +26,8 @@ class EffAddBlocks : Effect() {
     }
 
     private lateinit var location: Expression<Location>
-    private lateinit var view: Expression<ViewData>
-    private lateinit var stage: Expression<Stage>
+    private lateinit var view: Expression<ChunkedView>
+    private lateinit var stage: Expression<ChunkedStage>
 
     override fun toString(event: Event?, debug: Boolean): String {
         return "Add blocks to view with expression location(s): ${
@@ -51,8 +51,8 @@ class EffAddBlocks : Effect() {
         parser: SkriptParser.ParseResult?
     ): Boolean {
         location = expressions!![0] as Expression<Location>
-        view = expressions[1] as Expression<ViewData>
-        stage = expressions[2] as Expression<Stage>
+        view = expressions[1] as Expression<ChunkedView>
+        stage = expressions[2] as Expression<ChunkedStage>
         return true
     }
 
@@ -63,8 +63,11 @@ class EffAddBlocks : Effect() {
         Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
             run {
                 if (view == null || stage == null || locations == null) return@Runnable
-                stage.addBlocks(
-                    view.name, locations.map { Position.block(it) }.toSet()
+                val chunkedStage = stage
+                val chunkedView = view
+                chunkedStage.addBlocks(
+                    chunkedView.name,
+                    locations.map { SimplePosition.from(it.blockX, it.blockY, it.blockZ) }.toSet()
                 )
             }
         })

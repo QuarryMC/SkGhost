@@ -5,9 +5,9 @@ import ch.njol.skript.lang.Effect
 import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.data.PatternData
-import me.kooper.ghostcore.data.ViewData
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
+import me.kooper.ghostcore.models.ChunkedView
+import me.kooper.ghostcore.utils.PatternData
 import me.kooper.skghost.SkGhost
 import me.kooper.skghost.utils.Utils
 import org.bukkit.Bukkit
@@ -25,8 +25,8 @@ class EffSetPattern : Effect() {
     }
 
     private lateinit var pattern: Expression<String>
-    private lateinit var view: Expression<ViewData>
-    private lateinit var stage: Expression<Stage>
+    private lateinit var view: Expression<ChunkedView>
+    private lateinit var stage: Expression<ChunkedStage>
 
     override fun toString(event: Event?, debug: Boolean): String {
         return "Set blocks to pattern: ${
@@ -49,8 +49,8 @@ class EffSetPattern : Effect() {
         isDelayed: Kleenean?,
         parser: SkriptParser.ParseResult?
     ): Boolean {
-        view = expressions!![0] as Expression<ViewData>
-        stage = expressions[1] as Expression<Stage>
+        view = expressions!![0] as Expression<ChunkedView>
+        stage = expressions[1] as Expression<ChunkedStage>
         pattern = expressions[2] as Expression<String>
         return true
     }

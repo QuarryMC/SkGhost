@@ -6,7 +6,8 @@ import ch.njol.skript.lang.ExpressionType
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.skript.lang.util.SimpleExpression
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.data.ViewData
+import me.kooper.ghostcore.models.ChunkedStage
+import me.kooper.ghostcore.models.ChunkedView
 import me.kooper.ghostcore.models.Stage
 import org.bukkit.Location
 import org.bukkit.event.Event
@@ -14,26 +15,39 @@ import org.bukkit.event.Event
 @Suppress("UnstableApiUsage")
 class ExprBlocksInView : SimpleExpression<Location>() {
 
-    private lateinit var view: Expression<ViewData>
-    private lateinit var stage: Expression<Stage>
+    private lateinit var view: Expression<ChunkedView>
+    private lateinit var stage: Expression<ChunkedStage>
 
     companion object {
         init {
             Skript.registerExpression(
                 ExprBlocksInView::class.java,
-                Location::class.java, ExpressionType.COMBINED, "[the] blocks in %view% (of|in) %stage%", "all blocks in %view% (of|in) %stage%"
+                Location::class.java,
+                ExpressionType.COMBINED,
+                "[the] blocks in %view% (of|in) %stage%",
+                "all blocks in %view% (of|in) %stage%"
             )
         }
     }
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Blocks in view expression with expression view: ${view.toString(event, debug)}, expression stage: ${stage.toString(event, debug)}"
+        return "Blocks in view expression with expression view: ${
+            view.toString(
+                event,
+                debug
+            )
+        }, expression stage: ${stage.toString(event, debug)}"
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun init(expressions: Array<out Expression<*>>?, matchedPattern: Int, isDelayed: Kleenean?, parser: SkriptParser.ParseResult?): Boolean {
-        view = expressions!![0] as Expression<ViewData>
-        stage = expressions[1] as Expression<Stage>
+    override fun init(
+        expressions: Array<out Expression<*>>?,
+        matchedPattern: Int,
+        isDelayed: Kleenean?,
+        parser: SkriptParser.ParseResult?
+    ): Boolean {
+        view = expressions!![0] as Expression<ChunkedView>
+        stage = expressions[1] as Expression<ChunkedStage>
         return true
     }
 
@@ -48,8 +62,9 @@ class ExprBlocksInView : SimpleExpression<Location>() {
     override fun get(event: Event?): Array<Location?> {
         if (view.getSingle(event) == null || stage.getSingle(event) == null) return arrayOf(null)
         val stage: Stage = stage.getSingle(event)!!
-        val view: ViewData = view.getSingle(event)!!
-        return stage.views[view.name]!!.blocks.keys.map { p -> p.toLocation(stage.world) }.toTypedArray()
+        val view: ChunkedView = view.getSingle(event)!!
+//        return stage.views[view.name]!!.blocks.keys.map { p -> p.toLocation(stage.world) }.toTypedArray()
+        return view.getAllBlocksInBound().keys.map { it.toLocation(stage.world) }.toTypedArray()
     }
 
 }

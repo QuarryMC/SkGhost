@@ -6,8 +6,8 @@ import ch.njol.skript.lang.ExpressionType
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.skript.lang.util.SimpleExpression
 import ch.njol.util.Kleenean
-import me.kooper.ghostcore.data.ViewData
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
+import me.kooper.ghostcore.models.ChunkedView
 import org.bukkit.Location
 import org.bukkit.event.Event
 
@@ -15,8 +15,8 @@ import org.bukkit.event.Event
 @Suppress("UnstableApiUsage")
 class ExprHighestBlock : SimpleExpression<Location>() {
 
-    private lateinit var view: Expression<ViewData>
-    private lateinit var stage: Expression<Stage>
+    private lateinit var view: Expression<ChunkedView>
+    private lateinit var stage: Expression<ChunkedStage>
     private lateinit var location: Expression<Location>
 
     companion object {
@@ -47,8 +47,8 @@ class ExprHighestBlock : SimpleExpression<Location>() {
         parser: SkriptParser.ParseResult?
     ): Boolean {
         location = expressions!![0] as Expression<Location>
-        view = expressions[1] as Expression<ViewData>
-        stage = expressions[2] as Expression<Stage>
+        view = expressions[1] as Expression<ChunkedView>
+        stage = expressions[2] as Expression<ChunkedStage>
         return true
     }
 
@@ -66,7 +66,7 @@ class ExprHighestBlock : SimpleExpression<Location>() {
         )
         return arrayOf(
             (stage.getSingle(event)!!.getHighestPosition(
-                view.getSingle(event)!!.name,
+                (view.getSingle(event)!!).name,
                 location.getSingle(event)!!.blockX,
                 location.getSingle(event)!!.blockZ
             )

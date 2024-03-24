@@ -7,22 +7,26 @@ import ch.njol.skript.lang.util.SimpleEvent
 import ch.njol.skript.registrations.EventValues
 import ch.njol.skript.util.Getter
 import me.kooper.ghostcore.events.LeaveStageEvent
-import me.kooper.ghostcore.models.Stage
+import me.kooper.ghostcore.models.ChunkedStage
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
 class EvtRemovePlayerStage : SimpleEvent() {
 
-    companion object
-    {
+    companion object {
         init {
-            Skript.registerEvent("Ghost Leave Stage", EvtRemovePlayerStage::class.java, LeaveStageEvent::class.java, "player leave stage")
+            Skript.registerEvent(
+                "Ghost Leave Stage",
+                EvtRemovePlayerStage::class.java,
+                LeaveStageEvent::class.java,
+                "player leave stage"
+            )
             EventValues.registerEventValue(
                 LeaveStageEvent::class.java,
-                Stage::class.java, object : Getter<Stage?, LeaveStageEvent?>() {
-                    override operator fun get(e: LeaveStageEvent?): Stage? {
+                ChunkedStage::class.java, object : Getter<ChunkedStage?, LeaveStageEvent?>() {
+                    override operator fun get(e: LeaveStageEvent?): ChunkedStage? {
                         if (e == null) return null
-                        return e.stage
+                        return e.stage as ChunkedStage
                     }
                 }, 0
             )
@@ -42,7 +46,11 @@ class EvtRemovePlayerStage : SimpleEvent() {
         return "Ghost player leave stage event"
     }
 
-    override fun init(args: Array<out Literal<*>>?, matchedPattern: Int, parseResult: SkriptParser.ParseResult?): Boolean {
+    override fun init(
+        args: Array<out Literal<*>>?,
+        matchedPattern: Int,
+        parseResult: SkriptParser.ParseResult?
+    ): Boolean {
         return true
     }
 

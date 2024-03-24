@@ -10,11 +10,12 @@ import me.kooper.ghostcore.models.ChunkedView
 import me.kooper.ghostcore.utils.types.SimplePosition
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.data.BlockData
 import org.bukkit.event.Event
 
 
 @Suppress("UnstableApiUsage")
-class ExprBlockLocation : SimpleExpression<Material>() {
+class ExprBlockDataLocation : SimpleExpression<BlockData>() {
 
     private lateinit var view: Expression<ChunkedView>
     private lateinit var location: Expression<Location>
@@ -22,14 +23,14 @@ class ExprBlockLocation : SimpleExpression<Material>() {
     companion object {
         init {
             Skript.registerExpression(
-                ExprBlockLocation::class.java,
-                Material::class.java, ExpressionType.COMBINED, "[the] ghost block at %location% in view %view%"
+                ExprBlockDataLocation::class.java,
+                BlockData::class.java, ExpressionType.COMBINED, "[the] ghost block[ ]data at %location% in view %view%"
             )
         }
     }
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Block location of view expression with expression location: ${
+        return "Block data of view expression with expression location: ${
             location.toString(
                 event,
                 debug
@@ -53,11 +54,11 @@ class ExprBlockLocation : SimpleExpression<Material>() {
         return true
     }
 
-    override fun getReturnType(): Class<out Material> {
-        return Material::class.java
+    override fun getReturnType(): Class<out BlockData> {
+        return BlockData::class.java
     }
 
-    override fun get(event: Event?): Array<Material?> {
+    override fun get(event: Event?): Array<BlockData?> {
         if (location.getSingle(event) == null || view.getSingle(event) == null) {
             return arrayOf(null)
         }
@@ -74,7 +75,7 @@ class ExprBlockLocation : SimpleExpression<Material>() {
 
         val view = view.getSingle(event)!!
 
-        return arrayOf(view.getBlock(loc)?.block?.material)
+        return arrayOf(view.getBlock(loc)?.block)
     }
 
 }
