@@ -16,7 +16,7 @@ class EffRemovePlayerStage : Effect() {
     companion object {
         init {
             Skript.registerEffect(
-                EffAddPlayerStage::class.java,
+                EffRemovePlayerStage::class.java,
                 "remove %player% from stage %stage%"
             )
         }
@@ -26,7 +26,7 @@ class EffRemovePlayerStage : Effect() {
     private lateinit var stage: Expression<ChunkedStage>
 
     override fun toString(event: Event?, debug: Boolean): String {
-        return "Remove player from stage with expression player: ${
+        return "Remove player to stage with expression player: ${
             player.toString(
                 event,
                 debug
@@ -47,12 +47,10 @@ class EffRemovePlayerStage : Effect() {
     }
 
     override fun execute(event: Event?) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkGhost.instance, Runnable {
-            run {
-                if (player.getSingle(event) == null || stage.getSingle(event) == null) return@Runnable
-                stage.getSingle(event)!!.removePlayer(player.getSingle(event)!!)
-            }
-        })
+        val stage = stage.getSingle(event)
+        val player = player.getSingle(event)
+        if (player == null || stage == null) return
+        stage.removePlayer(player)
     }
 
 }
