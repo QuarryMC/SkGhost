@@ -27,6 +27,8 @@ class ExprAirBlocks : SimpleExpression<Location>() {
                 "[the] air blocks in %view% (of|in) %stage%",
                 "all air blocks in %view% (of|in) %stage%"
             )
+
+            ch.njol.skript.variables.Variables.numVariables()
         }
     }
 

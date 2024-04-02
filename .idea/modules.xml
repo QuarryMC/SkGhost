@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GhostSK.iml" filepath="$PROJECT_DIR$/GhostSK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SKGhost.main.iml" filepath="$PROJECT_DIR$/.idea/modules/SKGhost.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/SkGhost.iml" filepath="$PROJECT_DIR$/SkGhost.iml" />
     </modules>
   </component>

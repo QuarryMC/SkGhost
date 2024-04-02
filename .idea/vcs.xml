@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../GhostCore" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../MCP/packs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../MCP/party" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../Quarry/quarry" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../SKNoise" vcs="Git" />
   </component>
 </project>
